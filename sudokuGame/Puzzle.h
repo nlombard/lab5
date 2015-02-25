@@ -15,45 +15,45 @@ template<typename T>
 class Puzzle{	
 	public:
 		Puzzle(string); //constructor
-		void displayBoard();
-		int checkValid(int, int, int);
-		int checkQuad(int,int,int);
-		void play();
-		int didWin();
+		void displayBoard(); //display function for printing board
+		int checkValid(int, int, int); //checks whether placing certain number in grid is valid
+		int checkGrid(int,int,int); //checks if mini grid is valid for placement of number
+		void play(); //main game to play calls other functions to simulate soduku
+		int didWin(); //checks if winner
 	private:
-		vector<vector < T > > Board;
-		vector<vector < T > > OriginalBoard;
+		vector<vector < T > > Board; //storage for Board, a 2D vector
+		vector<vector < T > > OriginalBoard; //storage for OriginalBoard, a 2D vector of original values
 };
 
 //Function Implementations
 template <typename T>
 Puzzle<T>::Puzzle(string dataFile){ //constructor
 	int i = 0, j = 0;
-	T value;
-	ifstream infile;
-	vector<T> rowVec;
-	infile.open(dataFile.c_str());
+	T value; //value of data type T from template
+	ifstream infile; //creates stream variable
+	vector<T> rowVec; //vector for storage of row, then put into vector of vector
+	infile.open(dataFile.c_str()); //open datafile for read in
 	for (int i = 0; i < 9; i++){
 		for( int j = 0; j < 9; j++) {
-			infile >> value;
-			rowVec.push_back(value);
+			infile >> value; //read in value
+			rowVec.push_back(value); //put into vector
 		}
-		Board.push_back(rowVec);
-		rowVec.clear();
+		Board.push_back(rowVec); //put vector into board
+		rowVec.clear(); //clear storage vector for next row
 	}
-	OriginalBoard = Board;
+	OriginalBoard = Board; //set OrignalBoard equal to the Board read in with no user changes
 }
 template <typename T>
-void Puzzle<T>::displayBoard(){	
-	cout << "    ";
+void Puzzle<T>::displayBoard(){	//display function
+	cout << "    "; //formating
 	for (int k = 1; k < 10; k++){
-		cout << k << " ";
+		cout << k << " "; //output numbers for grid
 	}
-	cout << endl << "    - - - - - - - - -" <<  endl;
+	cout << endl << "    - - - - - - - - -" <<  endl; //formating
 	for (int i = 0; i < 9; i++){
-		cout << i + 1 << " | ";
+		cout << i + 1 << " | "; //output for grid
 		for( int j = 0; j < 9; j++) {
-			cout << Board[i][j] << " ";
+			cout << Board[i][j] << " "; //display board number and space
 		}
 			cout << endl;
 	}
@@ -94,15 +94,15 @@ int Puzzle<T>::checkValid(int x, int y, int z){
 		cout << "Error: number already exists in col!" << endl;
 		return 0; //cannot place invalid because more than one in row
 	}
-	if(checkQuad(x,y,z) == 0){
-		cout << "Error: number already exists in quad" << endl;
-		return 0; //return if number is in quad
+	if(checkGrid(x,y,z) == 0){
+		cout << "Error: number already exists in Grid" << endl;
+		return 0; //return if number is in Grid
 	}
 	return 1; // if no errors then it can be placed
 }
 template <typename T>
-int Puzzle<T>::checkQuad(int x, int y, int z){
-	int i = (x/3)*3; //start position using integer division to find correct quad
+int Puzzle<T>::checkGrid(int x, int y, int z){
+	int i = (x/3)*3; //start position using integer division to find correct Grid
 	int j = (y/3)*3;
 	int count[10];
 	for(int l = 0; l < 10; l++){
@@ -118,7 +118,7 @@ int Puzzle<T>::checkQuad(int x, int y, int z){
 	}
 	if(count[z]>=1){
 		if(z == 0){
-			return 1; //allow for 0 to be placed in quad
+			return 1; //allow for 0 to be placed in Grid
 		}
 		return 0;
 	}
@@ -134,25 +134,25 @@ void Puzzle<T>::play(){
 		if(z == -1){
 			return; //end game if z = -1
 		}
-		x--; y--; //take them into board terms
+		x--; y--; //take them into board terms users sees 1-9 computer sees 0-8
 		system("clear");
 		if(checkValid(x,y,z)){ //if it can be placed, place
 			Board[x][y] = z; //set board value
 		}
 	}
-	if(didWin()){
-		displayBoard();
+	if(didWin()){ //if no zeros left then board is solved
+		displayBoard(); 
 		cout << "Conrats! You Won!" << endl;
 	}
 }
 template <typename T>
-int Puzzle<T>::didWin(){
-	for(int i=0;i<9;i++){
+int Puzzle<T>::didWin(){ //did win function to check if there are no zeros on the board
+	for(int i=0;i<9;i++){ //if every placement is checked then when there are no zeros left the board is solved
 		for(int j=0;j<9;j++){
 			if(Board[i][j] == 0)
 				return 0; //still an empty spot
 		}
 	}
-	return 1;
+	return 1; //return 1 if after the whole board is checked there is no zeros (empty spots)
 }
 #endif
